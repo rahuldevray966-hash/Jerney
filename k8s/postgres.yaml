@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jerney-db
+  namespace: jerney
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: jerney-db
+  template:
+    metadata:
+      labels:
+        app: jerney-db
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - secretRef:
+                name: jerney-db-secret
+          volumeMounts:
+            - name: db-storage
+              mountPath: /var/lib/postgresql/data
+              subPath: pgdata
+      volumes:
+        - name: db-storage
+          persistentVolumeClaim:
+            claimName: jerney-db-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jerney-db
+  namespace: jerney
+spec:
+  type: ClusterIP
+  selector:
+    app: jerney-db
+  ports:
+    - port: 5432
+      targetPort: 5432

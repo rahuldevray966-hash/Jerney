@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jerney-frontend
+  namespace: jerney
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: jerney-frontend
+  template:
+    metadata:
+      labels:
+        app: jerney-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: rahuldev800/jeney-frontend:latest   # ✅ updated image
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jerney-frontend
+  namespace: jerney
+spec:
+  type: ClusterIP
+  selector:
+    app: jerney-frontend
+  ports:
+    - port: 80
+      targetPort: 8080

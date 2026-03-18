@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: jerney-ingress
+  namespace: jerney
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+
+    # 🔥 SSL config
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:469178993054:certificate/8c0095b1-e8c3-453b-9319-e1ee58cd754c
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: '443'
+
+    # Health check
+    alb.ingress.kubernetes.io/healthcheck-path: /
+    alb.ingress.kubernetes.io/success-codes: "200"
+
+spec:
+  ingressClassName: alb
+  rules:
+    - host: devopswithrahuldevray.shop
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: jerney-frontend
+                port:
+                  number: 80
