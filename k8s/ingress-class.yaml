@@ -3,4 +3,8 @@ kind: IngressClass
 metadata:
   name: alb
 spec:
-  controller: ingress.k8s.aws/alb
+  controller: eks.amazonaws.com/alb
+  parameters:
+    apiGroup: eks.amazonaws.com
+    kind: IngressClassParams
+    name: alb-public
